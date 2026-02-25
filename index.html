@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silent Echoes - Entry</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@300;400;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        .font-creepster { font-family: 'Creepster', cursive; }
+        .font-oswald { font-family: 'Oswald', sans-serif; }
+        
+        .neon-horror {
+            color: #f8fafc; /* White fill */
+            -webkit-text-stroke: 3px #dc2626; /* Thick red outline */
+            text-shadow: 0 0 10px rgba(220, 38, 38, 0.8), 
+                         0 0 20px rgba(220, 38, 38, 0.6), 
+                         0 0 40px rgba(153, 27, 27, 0.8),
+                         0 0 60px rgba(127, 29, 29, 0.8);
+        }
+
+        .flicker {
+            animation: flicker 4s infinite;
+        }
+        
+        @keyframes flicker {
+            0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+                opacity: 1;
+            }
+            20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+                opacity: 0.4;
+            }
+        }
+
+        .blood-drip:hover {
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.3);
+            background-color: rgba(220, 38, 38, 0.1);
+        }
+
+        .vignette {
+            background: radial-gradient(circle, rgba(0,0,0,0) 20%, rgba(0,0,0,0.95) 100%);
+        }
+        
+        .grain {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        
+        .scanlines {
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.25));
+            background-size: 100% 4px;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 45; pointer-events: none;
+        }
+        
+        .rec-pulse {
+            animation: recPulse 2s infinite;
+        }
+        
+        @keyframes recPulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.2; }
+            100% { opacity: 1; }
+        }
+        
+        /* --- NEW SPOOKY EFFECTS --- */
+        .glitch-anim {
+            animation: horrorGlitch 6s infinite;
+        }
+        @keyframes horrorGlitch {
+            0%, 94%, 100% { transform: translate(0) skew(0); text-shadow: 0 0 10px rgba(220,38,38,0.8); }
+            95% { transform: translate(-4px, 2px) skew(-8deg); text-shadow: -4px 0 red, 4px 0 blue; }
+            96% { transform: translate(4px, -2px) skew(8deg); text-shadow: 4px 0 red, -4px 0 blue; }
+            97% { transform: translate(0) skew(0); text-shadow: 0 0 10px rgba(220,38,38,0.8); filter: invert(1); }
+            98% { transform: translate(-2px, 0) skew(-2deg); text-shadow: -2px 0 red, 2px 0 blue; filter: invert(0); }
+        }
+
+        .ash-layer {
+            position: fixed; inset: 0; pointer-events: none; z-index: 25; opacity: 0.25;
+            background-image: 
+                radial-gradient(1.5px 1.5px at 20px 30px, #ffb3b3, transparent),
+                radial-gradient(2px 2px at 40px 70px, #ffffff, transparent),
+                radial-gradient(1px 1px at 50px 160px, #ff4d4d, transparent),
+                radial-gradient(2px 2px at 90px 40px, #ffffff, transparent),
+                radial-gradient(1.5px 1.5px at 130px 120px, #ffb3b3, transparent);
+            background-size: 200px 200px;
+            animation: driftUp 20s linear infinite;
+        }
+        @keyframes driftUp {
+            0% { background-position: 0 0; }
+            100% { background-position: -100px -200px; }
+        }
+
+        .heartbeat-glow {
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1) translateX(40px); opacity: 0.4; }
+            15% { transform: scale(1.15) translateX(40px); opacity: 0.8; }
+            30% { transform: scale(1) translateX(40px); opacity: 0.4; }
+            45% { transform: scale(1.2) translateX(40px); opacity: 0.9; }
+        }
+
+        @keyframes randomFlash {
+            0%, 93%, 98%, 100% { opacity: 0; }
+            94% { opacity: 0.15; filter: invert(1) contrast(300%) sepia(100%) hue-rotate(300deg); }
+            95% { opacity: 0; }
+            96% { opacity: 0.08; }
+            97% { opacity: 0; }
+        }
+        .subliminal-flash {
+            position: fixed; inset: 0; z-index: 60; pointer-events: none; mix-blend-mode: color-dodge;
+            background: url('https://images.unsplash.com/photo-1621188339890-48e02d8442c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80') center/cover;
+            animation: randomFlash 8s infinite;
+        }
+
+        /* Hover states triggered by JS */
+        .terror-mode .grain { opacity: 0.25; }
+        .terror-mode .scanlines { animation: scanline-frenzy 0.1s infinite; }
+        @keyframes scanline-frenzy {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(10px); }
+        }
+
+        /* --- TERMINAL/HACKER EFFECT --- */
+        .terminal-text {
+            font-family: 'Courier New', Courier, monospace;
+            color: #dc2626; /* Blood red */
+            text-shadow: 0 0 5px rgba(220,38,38,0.7);
+        }
+        .terminal-cursor {
+            display: inline-block;
+            width: 12px;
+            height: 1.2em;
+            background-color: #dc2626;
+            animation: terminalBlink 1s step-end infinite;
+            vertical-align: bottom;
+            margin-left: 2px;
+        }
+        @keyframes terminalBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-[#020202] text-gray-300 font-sans selection:bg-red-900 selection:text-white overflow-hidden transition-colors duration-500 cursor-crosshair">
+    
+    <!-- Immersive Overlays -->
+    <div class="grain transition-opacity duration-300"></div>
+    <div class="scanlines"></div>
+    <div class="ash-layer"></div>
+    <div class="subliminal-flash"></div>
+
+    <!-- VHS/CCTV UI overlay -->
+    <div class="fixed top-8 left-8 z-50 flex items-center gap-3 font-oswald text-red-600 tracking-widest text-lg drop-shadow-[0_0_5px_rgba(220,38,38,0.8)]">
+        <div class="w-3 h-3 bg-red-600 rounded-full rec-pulse shadow-[0_0_10px_red]"></div>
+        REC
+    </div>
+    <div class="fixed bottom-8 right-8 z-50 font-oswald text-gray-500 tracking-widest text-sm opacity-50">
+        CAM 04 - BASEMENT
+    </div>
+
+    <!-- Main Entry Screen Wrapper (Upgraded with scale and blur transitions) -->
+    <div id="entry-screen" class="relative min-h-screen flex items-center justify-center transition-all duration-[1500ms] ease-in-out opacity-100 scale-100 blur-none w-full origin-center">
+        
+        <!-- Background Poster Image with sinister tint -->
+        <div class="absolute inset-0 z-0">
+            <img 
+                src="https://images.unsplash.com/photo-1505635552518-3448ff116af3?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" 
+                alt="Dark Spooky Forest" 
+                class="w-full h-full object-cover opacity-20 scale-105 animate-[pulse_10s_ease-in-out_infinite] mix-blend-luminosity filter sepia-[0.3] hue-rotate-[-50deg]"
+            />
+            <!-- Vignette & Shadow Gradients -->
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#000000_90%)] z-10"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black z-10 opacity-80"></div>
+            <div class="absolute inset-0 bg-black/60 z-10"></div>
+        </div>
+
+        <!-- Two Column Content Wrapper -->
+        <div class="relative z-20 w-full max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24 items-center">
+            
+            <!-- Left Column: Title and Content -->
+            <div class="flex flex-col items-center md:items-start text-center md:text-left space-y-8">
+                <div class="inline-block border border-[#8b2323]/30 bg-[#8b2323]/10 px-4 py-1 backdrop-blur-sm">
+                    <p class="text-[#dc2626] font-oswald tracking-[0.4em] uppercase text-xs font-bold drop-shadow-lg">
+                        A purely terrifying experience
+                    </p>
+                </div>
+                
+                <h1 class="font-creepster text-7xl md:text-[100px] lg:text-[130px] neon-horror flicker glitch-anim leading-[0.85] m-0 md:-ml-2 relative">
+                    SILENT<br/>ECHOES
+                </h1>
+                
+                <div class="w-full max-w-[300px] h-[2px] bg-gradient-to-r from-[#dc2626] to-transparent opacity-50"></div>
+
+                <p class="text-gray-400 font-oswald max-w-md text-sm tracking-[0.05em] leading-relaxed">
+                    Some places are meant to be forgotten. Step inside the archives and uncover the truth... if you dare.
+                </p>
+
+                <button 
+                    id="continue-btn"
+                    class="blood-drip group px-10 py-4 bg-black/40 backdrop-blur-md border border-[#8b2323] text-[#ff4444] font-oswald uppercase tracking-[0.2em] text-lg transition-all duration-300 flex items-center gap-4 hover:border-red-500 hover:shadow-[0_0_30px_rgba(220,38,38,0.4)] relative overflow-hidden"
+                >
+                    <div class="absolute inset-0 w-0 bg-red-950/50 transition-all duration-500 ease-out group-hover:w-full z-0"></div>
+                    <span class="relative z-10">ENTER THE DARKNESS</span> 
+                    <span class="relative z-10 text-xl group-hover:translate-x-2 transition-transform duration-300">&gt;</span>
+                </button>
+
+                <div class="text-[#4a5568] text-xs tracking-[0.2em] uppercase font-oswald pt-2 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                    Headphones Recommended
+                </div>
+            </div>
+
+            <!-- Right Column: Poster Showcase -->
+            <div class="flex justify-center md:justify-end hidden sm:flex relative">
+                <!-- Spooky ambient red glow behind the poster -->
+                <div class="absolute inset-0 bg-red-700/30 blur-[100px] rounded-full z-0 heartbeat-glow"></div>
+                
+                <!-- Poster Frame -->
+                <div id="poster-frame" class="relative p-2 bg-[#050505] border border-red-900/40 shadow-[0_0_50px_rgba(153,27,27,0.4)] transform -rotate-2 hover:rotate-1 hover:scale-105 transition-all duration-300 z-10 group cursor-crosshair">
+                    <!-- Glass glare effect -->
+                    <div class="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-transparent z-10 pointer-events-none"></div>
+                    
+                    <img 
+                        src="https://images.unsplash.com/photo-1509343256512-d77a5cb3791b?ixlib=rb-4.0.3&auto=format&fit=crop&w=700&q=80" 
+                        alt="Temporary Movie Poster" 
+                        class="w-full max-w-[320px] lg:max-w-[420px] object-cover aspect-[2/3] border border-red-950/80 opacity-80 group-hover:opacity-100 transition-opacity duration-500 filter contrast-[1.2] grayscale-[0.4] sepia-[0.2]"
+                    />
+                    
+                    <!-- Temporary Tag -->
+                    <div class="absolute top-4 right-4 z-20 bg-red-900 text-white text-[10px] font-oswald tracking-[0.2em] px-3 py-1 uppercase border border-red-500/50 backdrop-blur-md shadow-lg shadow-black/50 animate-pulse">
+                        TEMPORARY PHOTO
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+    </div>
+
+    <!-- Terminal/Hacker Transition Screen (Hidden by default) -->
+    <div id="terminal-screen" class="fixed inset-0 bg-black z-[100] hidden flex-col items-start justify-center p-8 md:p-24 overflow-hidden pointer-events-none">
+        <div id="terminal-content" class="terminal-text text-sm md:text-lg lg:text-xl leading-relaxed whitespace-pre-wrap w-full max-w-4xl mx-auto"></div>
+        <div class="w-full max-w-4xl mx-auto mt-1"><div class="terminal-cursor" id="terminal-cursor"></div></div>
+    </div>
+
+    <!-- JavaScript for Handling Audio, Transitions & Redirects -->
+    <script>
+        // --- WEB AUDIO API SYSTEM ---
+        let audioCtx;
+        let droneGain;
+        let noiseBuffer;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Create static noise buffer for glitch/crash impacts
+                const bufferSize = audioCtx.sampleRate * 2; // 2 seconds
+                noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const output = noiseBuffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    output[i] = Math.random() * 2 - 1;
+                }
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            if (!droneGain) {
+                // Background Ambient Drone (Low detuned hum)
+                const osc = audioCtx.createOscillator();
+                const osc2 = audioCtx.createOscillator();
+                droneGain = audioCtx.createGain();
+                
+                osc.type = 'sawtooth';
+                osc.frequency.value = 55;
+                osc2.type = 'sine';
+                osc2.frequency.value = 54; 
+                
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 200;
+
+                droneGain.gain.value = 0;
+                droneGain.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 3); 
+                
+                osc.connect(filter);
+                osc2.connect(filter);
+                filter.connect(droneGain);
+                droneGain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc2.start();
+            }
+        }
+
+        // Must init audio on first user interaction due to browser autoplay policies
+        document.body.addEventListener('click', initAudio, { once: true });
+
+        function playGlitchSound() {
+            if(!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        function playCinematicImpact() {
+            if(!audioCtx) initAudio();
+            
+            // Sub Bass Drop
+            const osc = audioCtx.createOscillator();
+            const oscGain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(80, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 2.5);
+            oscGain.gain.setValueAtTime(1, audioCtx.currentTime);
+            oscGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 2.5);
+            osc.connect(oscGain);
+            oscGain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 2.5);
+
+            // High Frequency Crash Noise
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = noiseBuffer;
+            const noiseFilter = audioCtx.createBiquadFilter();
+            noiseFilter.type = 'lowpass';
+            noiseFilter.frequency.setValueAtTime(2000, audioCtx.currentTime);
+            noiseFilter.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 1.5);
+            const noiseGain = audioCtx.createGain();
+            noiseGain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            noiseGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1.5);
+            noise.connect(noiseFilter);
+            noiseFilter.connect(noiseGain);
+            noiseGain.connect(audioCtx.destination);
+            noise.start();
+        }
+
+        function playKeystroke() {
+            if(!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(600 + Math.random() * 400, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.02, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+            
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'highpass';
+            filter.frequency.value = 1000;
+
+            osc.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.04);
+        }
+
+        // --- UI INTERACTION LOGIC ---
+        const continueBtn = document.getElementById('continue-btn');
+        const posterFrame = document.getElementById('poster-frame');
+        const body = document.body;
+
+        // Hover Sounds and Effects
+        continueBtn.addEventListener('mouseenter', () => {
+            body.classList.add('terror-mode');
+            playGlitchSound();
+        });
+        continueBtn.addEventListener('mouseleave', () => body.classList.remove('terror-mode'));
+        
+        posterFrame.addEventListener('mouseenter', () => {
+            const img = posterFrame.querySelector('img');
+            img.classList.add('invert', 'contrast-[3]');
+            playGlitchSound();
+            setTimeout(() => img.classList.remove('invert', 'contrast-[3]'), 150);
+        });
+
+        // Terminal animation logic
+        const terminalLines = [
+            "SYSTEM_BOOT_SEQ: INITIATED",
+            "CONNECTING TO SECURE SERVER: 192.168.0.ERROR",
+            "BYPASSING FIREWALL... [SUCCESS]",
+            "ACCESSING CLASSIFIED DIRECTORY: /ARCHIVES/SE_PROJECT",
+            "DECRYPTING FILES... \n01001000 01000101 01001100 01010000",
+            "WARNING: UNKNOWN ENTITY DETECTED IN SECTOR 4",
+            "OVERRIDING SAFETY PROTOCOLS...",
+            " ",
+            ">> WELCOME TO SILENT ECHOES."
+        ];
+        
+        let currentLine = 0;
+        let currentChar = 0;
+        
+        function typeTerminal() {
+            const content = document.getElementById('terminal-content');
+            
+            if (currentLine < terminalLines.length) {
+                if (currentChar < terminalLines[currentLine].length) {
+                    let char = terminalLines[currentLine].charAt(currentChar);
+                    if (char === '\n') {
+                        content.innerHTML += '<br>';
+                    } else {
+                        content.innerHTML += char;
+                        // Play a keystroke sound if it's not a space
+                        if(char.trim() !== "") playKeystroke();
+                    }
+                    currentChar++;
+                    
+                    const isLastLine = currentLine === terminalLines.length - 1;
+                    const typingSpeed = isLastLine ? 100 : Math.random() * 30 + 10;
+                    
+                    setTimeout(typeTerminal, typingSpeed);
+                } else {
+                    content.innerHTML += "<br>";
+                    currentLine++;
+                    currentChar = 0;
+                    
+                    const isBeforeLastLine = currentLine === terminalLines.length - 1;
+                    setTimeout(typeTerminal, isBeforeLastLine ? 800 : 200);
+                }
+            } else {
+                document.getElementById('terminal-cursor').classList.add('hidden');
+                setTimeout(() => {
+                    window.location.href = 'home.html';
+                }, 1200);
+            }
+        }
+
+        // Main Button Click Event
+        continueBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Initialize audio explicitly on click (satisfies browser policy)
+            initAudio();
+            
+            // Play massive cinematic boom sound
+            playCinematicImpact();
+            
+            const screen = document.getElementById('entry-screen');
+            
+            body.classList.remove('bg-[#020202]');
+            body.classList.add('bg-red-950');
+            
+            setTimeout(() => {
+                body.classList.remove('bg-red-950');
+                body.classList.add('bg-black');
+            }, 100);
+            
+            screen.classList.remove('opacity-100', 'scale-100', 'blur-none');
+            screen.classList.add('opacity-0', 'scale-[1.5]', 'blur-2xl', 'brightness-0');
+            
+            setTimeout(() => {
+                screen.classList.add('hidden');
+                const terminal = document.getElementById('terminal-screen');
+                terminal.classList.remove('hidden');
+                terminal.classList.add('flex');
+                
+                // Start typing the hacker script with sounds
+                setTimeout(typeTerminal, 500);
+            }, 1500); 
+        });
+    </script>
+</body>
+</html>
