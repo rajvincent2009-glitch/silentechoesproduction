@@ -104,21 +104,68 @@
         }
 
         /* NEW: Hero Background Video */
-        .hero-video {
+        .video-background-wrapper {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            overflow: hidden;
             z-index: 0; /* Behind the overlay */
+            pointer-events: none; /* Let clicks pass through */
+        }
+        
+        .hero-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 56.25vw; /* 16:9 aspect ratio */
+            min-height: 100vh;
+            min-width: 177.77vh; /* 16:9 aspect ratio */
             opacity: 0; /* Hidden until idle */
             transition: opacity 2s ease-in-out; /* Smooth cinematic fade */
-            pointer-events: none; /* Let clicks pass through to the container */
+            pointer-events: none;
         }
         
         .hero-video.playing {
             opacity: 1;
+        }
+
+        /* NEW: Trailer Mute Button */
+        .trailer-mute-btn {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            z-index: 50;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        .trailer-mute-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .trailer-mute-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.1);
+        }
+        .trailer-mute-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
         }
 
         .overlay {
@@ -563,6 +610,38 @@
             border-color: rgba(229, 9, 20, 1);
         }
 
+        /* --- NEW: EASTER EGG STYLES --- */
+        body.spooky-mode .poster-container::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 0, 0, 0.4);
+            z-index: 50;
+            pointer-events: none;
+            animation: spookyFlicker 0.15s infinite alternate;
+            mix-blend-mode: multiply;
+        }
+
+        body.spooky-mode #eerieTitle {
+            color: #e50914;
+            text-shadow: 0 0 20px #e50914, 0 0 40px #e50914;
+            animation: textGlitch 0.2s infinite;
+        }
+
+        @keyframes spookyFlicker {
+            0% { opacity: 0.1; }
+            100% { opacity: 0.9; }
+        }
+
+        @keyframes textGlitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-3px, 3px); }
+            40% { transform: translate(-3px, -3px); }
+            60% { transform: translate(3px, 3px); }
+            80% { transform: translate(3px, -3px); }
+            100% { transform: translate(0); }
+        }
+
         /* --- User Provided Mobile Overrides --- */
         @media (max-width: 900px) {
             /* Mobile Navbar */
@@ -611,6 +690,11 @@
                 align-items: flex-start;
             }
             .credits-corner { text-align: center; max-width: 100%; }
+
+            .trailer-mute-btn {
+                bottom: 80px; /* Above the audio theme button */
+                right: 20px;
+            }
 
             /* Center audio button on mobile */
             .audio-toggle { 
@@ -706,19 +790,28 @@
 
     <!-- Audio Element -->
     <audio id="theme-audio" loop>
-        <source src="horrorambiance3.mp3" type="audio/mp3">
+        <source src="https://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/theme_01.mp3" type="audio/mp3">
+    </audio>
+
+    <!-- NEW: Spooky Easter Egg Audio -->
+    <audio id="spooky-audio">
+        <source src="https://actions.google.com/sounds/v1/horror/whispers_in_the_dark.ogg" type="audio/ogg">
     </audio>
 
     <div class="poster-container">
         
-        <!-- New Netflix-style Background Trailer -->
-        <!-- Note: Muted is required by browsers to allow autoplay -->
-        <video id="heroVideo" class="hero-video" muted loop playsinline crossorigin="anonymous">
-            <!-- Cinematic Sci-Fi/Dark Placeholder Video -->
-            <source src="TEASER.mov" type="video/mp4">
-        </video>
+        <!-- New Netflix-style Background Trailer (YouTube) -->
+        <div class="video-background-wrapper">
+            <div id="heroVideo" class="hero-video"></div>
+        </div>
 
         <div class="overlay"></div>
+
+        <!-- NEW: Trailer Audio Toggle -->
+        <button id="trailerMuteBtn" class="trailer-mute-btn" aria-label="Toggle Mute">
+            <svg id="icon-muted" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+            <svg id="icon-unmuted" viewBox="0 0 24 24" style="display: none;"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+        </button>
 
         <div class="content-grid">
             <!-- Left Side: Main Info -->
@@ -728,7 +821,8 @@
                     TV Series
                 </div>
 
-                <h1>EERIE</h1>
+                <!-- ADDED ID AND POINTER CURSOR FOR EASTER EGG -->
+                <h1 id="eerieTitle" style="cursor: pointer; user-select: none;" title="Are you sure you want to wake them?">EERIE</h1>
 
                 <div class="info-block">
                     <!-- New Poster Box -->
@@ -905,27 +999,98 @@
             }
         }
 
-        // --- NEW: Netflix-style Idle Video Trailer Logic ---
-        const heroVideo = document.getElementById('heroVideo');
+        // --- NEW: Netflix-style Idle Video Trailer Logic (YouTube API) ---
+        const trailerMuteBtn = document.getElementById('trailerMuteBtn');
+        const iconMuted = document.getElementById('icon-muted');
+        const iconUnmuted = document.getElementById('icon-unmuted');
         let idleTimer;
         let videoStarted = false;
+        let ytPlayerReady = false;
+        let ytPlayer;
+
+        // Load the IFrame Player API code asynchronously
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // Initialize the YouTube Player
+        window.onYouTubeIframeAPIReady = function() {
+            ytPlayer = new YT.Player('heroVideo', {
+                videoId: 'vpPgBs2MTxI', // NEW Eerie Trailer YouTube ID
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'disablekb': 1,
+                    'loop': 1,
+                    'playlist': 'vpPgBs2MTxI', // required to loop correctly
+                    'modestbranding': 1,
+                    'mute': 1, // Start muted to guarantee browser allows autoplay
+                    'playsinline': 1,
+                    'rel': 0,
+                    'showinfo': 0
+                },
+                events: {
+                    'onReady': function(event) {
+                        ytPlayerReady = true;
+                        resetIdleTimer(); // Start timer once player is fully loaded
+                    },
+                    'onStateChange': function(event) {
+                        const iframeElem = document.getElementById('heroVideo');
+                        // Only fade in when video is actually PLAYING (avoids showing red play button)
+                        if (event.data === YT.PlayerState.PLAYING) {
+                            iframeElem.classList.add('playing');
+                            trailerMuteBtn.classList.add('visible');
+                            
+                            // Match UI to actual mute state
+                            if (ytPlayer.isMuted()) {
+                                iconMuted.style.display = 'block';
+                                iconUnmuted.style.display = 'none';
+                            } else {
+                                iconMuted.style.display = 'none';
+                                iconUnmuted.style.display = 'block';
+                            }
+                        } else if (event.data === YT.PlayerState.PAUSED) {
+                            iframeElem.classList.remove('playing');
+                            trailerMuteBtn.classList.remove('visible');
+                        }
+                    }
+                }
+            });
+        }
 
         function resetIdleTimer() {
-            // If the video already started playing, don't restart the timer
-            if (videoStarted) return; 
+            // If the video already started playing or isn't ready, don't restart the timer
+            if (videoStarted || !ytPlayerReady) return; 
 
             clearTimeout(idleTimer);
             
             // Wait 3.5 seconds of inactivity before playing the background video
             idleTimer = setTimeout(() => {
                 videoStarted = true;
-                heroVideo.play().then(() => {
-                    heroVideo.classList.add('playing');
-                }).catch(err => {
-                    console.log("Autoplay blocked by browser:", err);
-                });
+                ytPlayer.playVideo(); 
+                // YouTube will play it muted (as set in playerVars) to bypass browser autoplay blocks
             }, 3500);
         }
+
+        // Handle Mute Button Click
+        trailerMuteBtn.addEventListener('click', () => {
+            if (ytPlayer.isMuted()) {
+                ytPlayer.unMute();
+                iconMuted.style.display = 'none';
+                iconUnmuted.style.display = 'block';
+                // Pause theme music if unmuting trailer
+                if (!audio.paused) {
+                    audio.pause();
+                    document.body.classList.remove('playing');
+                    document.getElementById('audioBtn').innerText = "Play Theme";
+                }
+            } else {
+                ytPlayer.mute();
+                iconMuted.style.display = 'block';
+                iconUnmuted.style.display = 'none';
+            }
+        });
 
         // Listen for user activity to delay the video start
         window.addEventListener('mousemove', resetIdleTimer);
@@ -936,17 +1101,52 @@
         window.addEventListener('scroll', () => {
              resetIdleTimer(); // reset timer if they scroll before it starts
              
+             if (!ytPlayerReady) return;
+
+             const iframeElem = document.getElementById('heroVideo');
+             
              if (window.scrollY > 300) {
-                 heroVideo.pause();
-                 heroVideo.classList.remove('playing');
+                 ytPlayer.pauseVideo();
+                 if (iframeElem) iframeElem.classList.remove('playing');
+                 trailerMuteBtn.classList.remove('visible');
              } else if (videoStarted) {
-                 heroVideo.play();
-                 heroVideo.classList.add('playing');
+                 ytPlayer.playVideo();
+                 if (iframeElem) iframeElem.classList.add('playing');
+                 trailerMuteBtn.classList.add('visible');
              }
         });
 
-        // Start the timer when the page loads
-        resetIdleTimer();
+        // --- NEW: EASTER EGG LOGIC ---
+        const eerieTitle = document.getElementById('eerieTitle');
+        const spookyAudio = document.getElementById('spooky-audio');
+        let titleClicks = 0;
+        let titleClickTimer;
+
+        eerieTitle.addEventListener('click', () => {
+            titleClicks++;
+            
+            // Clear the reset timer on every click
+            clearTimeout(titleClickTimer);
+            
+            if (titleClicks === 3) {
+                // Trigger the Easter Egg!
+                document.body.classList.add('spooky-mode');
+                spookyAudio.volume = 0.8;
+                spookyAudio.currentTime = 0; // Restart sound if played multiple times
+                spookyAudio.play();
+                
+                // End the nightmare after 4.5 seconds
+                setTimeout(() => {
+                    document.body.classList.remove('spooky-mode');
+                    titleClicks = 0;
+                }, 4500);
+            } else {
+                // If they don't click 3 times within 1.5 seconds, reset the count
+                titleClickTimer = setTimeout(() => {
+                    titleClicks = 0;
+                }, 1500);
+            }
+        });
 
     </script>
 
